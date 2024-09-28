@@ -51,7 +51,7 @@ func main() {
 		// Load the records for that zone
 		remoteRecords, err := GetRecords(ctx, api, zone.ZoneID)
 		if err != nil {
-			fmt.Printf("Error fetching records for zone %s: %v\n", zone.Name, err)
+			slog.Error("Error fetching records for zone", "zone", zone.Name, "error", err)
 			continue // Skip to the next zone if there’s an error
 		}
 
@@ -75,8 +75,6 @@ func main() {
 			if remoteRecord == nil {
 				r.Content = externalIp
 
-				fmt.Printf("Creating DNS record with parameters: Type=%s, Name=%s, Content=%s, TTL=%d, Proxied=%v\n",
-					r.Type, r.Name, r.Content, r.TTL, r.Proxied)
 				err := CreateRecord(ctx, api, zone.ZoneID, r)
 				if err != nil {
 					slog.Error("failed to create record", "error", err)
