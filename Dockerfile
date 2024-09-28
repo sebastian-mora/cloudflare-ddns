@@ -1,20 +1,30 @@
-# syntax=docker/dockerfile:1
+# Stage 1: Build the Go binary
+FROM golang:1.22-alpine AS builder
 
-FROM golang
+# Install git (needed for Go module retrieval)
+RUN apk add --no-cache git
 
-# Set destination for COPY
+# Set the working directory
 WORKDIR /app
 
-# Download Go modules
+# Copy the Go module files and download dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy go files
-COPY *.go ./
+# Copy the source code
+COPY . .
 
-# Build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /cloudflare-ddns
+# Build the Go binary
+RUN go build -o /cloudflare-ddns .
 
+# Stage 2: Create a minimal image
+FROM alpine:latest
 
-# Run
-CMD ["/cloudflare-ddns"]
+# Install CA certificates for HTTPS
+RUN apk --no-cache add ca-certificates
+
+# Copy the binary from the builder stage
+COPY --from=builder /cloudflare-ddns /usr/local/bin/cloudflare-ddns
+
+# Run the binary
+CMD ["/usr/local/bin/cloudflare-ddns"]

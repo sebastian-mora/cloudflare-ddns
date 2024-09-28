@@ -22,8 +22,9 @@ type Zone struct {
 }
 
 type Config struct {
-	Zones             []Zone `yaml:"zones"` // List of zones
-	ExternalIPService string `yaml:"externalIpService"`
+	CloudFlareApiToken string `yaml:"cloudflareApiToken"`
+	Zones              []Zone `yaml:"zones"` // List of zones
+	ExternalIPService  string `yaml:"externalIpService"`
 }
 
 // LoadConfig loads the DNS records from a YAML file.

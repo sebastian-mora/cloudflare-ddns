@@ -10,22 +10,9 @@ import (
 )
 
 func main() {
-	CF_TOKEN := os.Getenv("CF_TOKEN")
 	CONFIG_FILE := os.Getenv("CONFIG_FILE")
 
 	slog.SetLogLoggerLevel(slog.LevelDebug)
-
-	if CF_TOKEN == "" {
-		slog.Error("CF_TOKEN not set")
-		os.Exit(1)
-	}
-
-	// Construct a new API object using a global API key
-	api, err := cloudflare.NewWithAPIToken(CF_TOKEN)
-	if err != nil {
-		slog.Error("failed to create cloudflare api client", "error", err)
-		os.Exit(1)
-	}
 
 	if CONFIG_FILE == "" {
 		CONFIG_FILE = "./config.yaml"
@@ -36,6 +23,13 @@ func main() {
 	slog.Info("loaded records", "filename", CONFIG_FILE)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Construct a new API object using a global API key
+	api, err := cloudflare.NewWithAPIToken(config.CloudFlareApiToken)
+	if err != nil {
+		slog.Error("failed to create cloudflare api client", "error", err)
 		os.Exit(1)
 	}
 
