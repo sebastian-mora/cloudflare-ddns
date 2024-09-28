@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	CF_TOKEN := os.Getenv("CF_TOKEN")
 	CONFIG_FILE := os.Getenv("CONFIG_FILE")
 
@@ -41,7 +40,6 @@ func main() {
 	}
 
 	externalIp, err := GetExternalIP(config.ExternalIPService)
-
 	if err != nil {
 		slog.Error("failed to fetch external ip", "error", err)
 	}
@@ -57,40 +55,36 @@ func main() {
 			continue // Skip to the next zone if there’s an error
 		}
 
-		for k := range zone.Records {
-			remoteRecord := FindDnsRecordInSlice(k, remoteRecords)
+		for _, r := range zone.Records {
+			// Find the remote record by its name
+			remoteRecord := FindDnsRecordInSlice(r.Name, remoteRecords)
 
 			if remoteRecord != nil && remoteRecord.Type == "A" && remoteRecord.Content != externalIp {
-				r := zone.Records[k]
+
 				r.Content = externalIp
 
 				err := UpdateRecord(ctx, api, zone.ZoneID, remoteRecord.ID, r)
-
 				if err != nil {
 					slog.Error("failed to update record", "error", err)
 					continue
 				}
 
 				slog.Info("updated A record", "name", remoteRecord.Name, "old_ip", remoteRecord.Content, "new_ip", externalIp)
-
 			}
 
 			if remoteRecord == nil {
-				r := zone.Records[k]
 				r.Content = externalIp
 
 				fmt.Printf("Creating DNS record with parameters: Type=%s, Name=%s, Content=%s, TTL=%d, Proxied=%v\n",
 					r.Type, r.Name, r.Content, r.TTL, r.Proxied)
 				err := CreateRecord(ctx, api, zone.ZoneID, r)
-
 				if err != nil {
 					slog.Error("failed to create record", "error", err)
 					continue
 				}
 
-				slog.Info("created A record", "name", k, "new_ip", externalIp)
+				slog.Info("created A record", "name", r.Name, "new_ip", externalIp)
 			}
 		}
-
 	}
 }

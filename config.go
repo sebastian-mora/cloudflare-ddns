@@ -16,9 +16,9 @@ type DNSRecord struct {
 }
 
 type Zone struct {
-	ZoneID  string               `yaml:"zoneId"`
-	Name    string               `yaml:"name"`
-	Records map[string]DNSRecord `yaml:"records"` // Use a map for records
+	ZoneID  string      `yaml:"zoneId"`
+	Name    string      `yaml:"name"`
+	Records []DNSRecord `yaml:"records"` // Change to a slice for records
 }
 
 type Config struct {
