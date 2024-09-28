@@ -1,0 +1,15 @@
+zones:
+  - zoneId: "da16ac78eebbbda228165c4dc7e1be00"
+    name: "rusecrew.com"
+    records:
+      # ddns.rusecrew.com:
+      #   content: "10.0.0.1"
+      #   proxied: false
+      #   ttl: 3600
+      #   type: "A"
+      fake.rusecrew.com:
+        name: fake.rusecrew.com
+        proxied: false
+        type: "A"
+
+externalIpService: "https://ifconfig.io/ip"
