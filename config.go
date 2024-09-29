@@ -25,6 +25,7 @@ type Config struct {
 	CloudFlareApiToken string `yaml:"cloudflareApiToken"`
 	Zones              []Zone `yaml:"zones"` // List of zones
 	ExternalIPService  string `yaml:"externalIpService"`
+	UpdateInterval     int    `yaml:"updateInterval"`
 }
 
 // LoadConfig loads the DNS records from a YAML file.
